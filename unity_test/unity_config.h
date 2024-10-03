@@ -1,0 +1,8 @@
+#ifndef UNITY_CONFIG_H
+# define UNITY_CONFIG_H
+
+// Color output
+# define UNITY_INCLUDE_PRINT_FORMATTED
+# define UNITY_OUTPUT_COLOR
+
+#endif // UNITY_INCLUDE_CONFIG_H
