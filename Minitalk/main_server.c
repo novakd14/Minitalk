@@ -6,25 +6,63 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:09:17 by dnovak            #+#    #+#             */
-/*   Updated: 2024/10/08 14:49:37 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/10/09 14:34:17 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.h"
 
-char		g_message[2];
+t_message	g_mess;
 
-static void	signal_handler(int signum)
+static void	load_message_size(int signum)
 {
 	if (signum == SIGUSR1)
 	{
-		g_message[0] = g_message[0] * 2 + 1;
-		g_message[1]++;
+		g_mess.size = (g_mess.size << 1) + 1;
+		g_mess.bite++;
 	}
 	else if (signum == SIGUSR2)
 	{
-		g_message[0] = g_message[0] * 2;
-		g_message[1]++;
+		g_mess.size = g_mess.size << 1;
+		g_mess.bite++;
+	}
+}
+
+static void	malloc_buff(void)
+{
+	g_mess.message = (char *)calloc(g_mess.size + 1, sizeof(char));
+	if (g_mess.message == NULL)
+		exit(EXIT_FAILURE);
+	*(g_mess.message + g_mess.size) = 0;
+}
+
+static void	signal_handler(int signum)
+{
+	if (g_mess.bite == 1)
+		g_mess.recieving = TRUE;
+	if (g_mess.bite == (int)sizeof(int) * 8 && g_mess.message == NULL)
+		malloc_buff();
+	if (g_mess.bite < (int)sizeof(int) * 8)
+		load_message_size(signum);
+	else if (g_mess.bite / 8 - (int)sizeof(int) < g_mess.size)
+	{
+		if (signum == SIGUSR1)
+		{
+			*(g_mess.message + g_mess.bite / 8 - sizeof(int)) *= 2;
+			*(g_mess.message + g_mess.bite / 8 - sizeof(int)) += 1;
+			g_mess.bite++;
+		}
+		else if (signum == SIGUSR2)
+		{
+			*(g_mess.message + g_mess.bite / 8 - sizeof(int)) *= 2;
+			g_mess.bite++;
+		}
+	}
+	if (g_mess.bite / 8 - (int)sizeof(int) == g_mess.size)
+	{
+		ft_printf("%s\n", g_mess.message);
+		free(g_mess.message);
+		ft_bzero(&g_mess, sizeof(g_mess));
 	}
 }
 
@@ -45,21 +83,21 @@ static void	set_signal(void)
 
 int	main(void)
 {
-	ft_bzero(&g_message, sizeof(g_message));
+	ft_bzero(&g_mess, sizeof(g_mess));
 	set_signal();
 	ft_printf("%i\n", getpid());
 	while (1)
 	{
-		pause();
-		if (g_message[1] >= 8)
+		if (sleep(2) == 0 && g_mess.recieving == TRUE)
 		{
-			if (g_message[0] == 0)
-			{
-				write(1, "\n", 1);
-			}
-			write(1, g_message, 1);
-			g_message[0] = 0;
-			g_message[1] = 0;
+			if (g_mess.message != NULL)
+				free(g_mess.message);
+			return (EXIT_FAILURE);
+		}
+		else
+		{
+			g_mess.recieving = TRUE;
+			pause();
 		}
 	}
 }
