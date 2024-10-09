@@ -4,6 +4,15 @@ The purpose of this project is to code a small data exchange program  using UNIX
 
 # Notes
 
+## v1.1
+
+- message is now printing after completly recieving it (first is send the size of message)
+- removed timestamps from client
+- best queueing possible
+- Need to add:
+	- returning signal once server deals with previous signal to deal with pending (server after recieving signal sends signal back to client to inform it to send next signal)
+	- [**NO BONUS!** - for bonus use sa_sigaction to get pid of calling process]
+
 ## v1
 
 - Sending and recieving signals using ASCII encoding
