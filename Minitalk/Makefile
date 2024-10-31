@@ -13,6 +13,8 @@ HEAD_SERVER = server.h
 OBJS_CLIENT = $(SRCS_CLIENT:.c=.o)
 OBJS_SERVER = $(SRCS_SERVER:.c=.o)
 
+NAMES = $(NAME_CLIENT) $(NAME_SERVER)
+
 MESSAGE1 = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor."
 MESSAGE2 = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 MESSAGE3 = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt."
@@ -20,21 +22,22 @@ MESSAGE4 = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean com
 
 .PHONY: all clean fclean re test norm memleak
 
-all: $(NAME_CLIENT) $(NAME_SERVER)
+all: $(NAMES)
 
 $(NAME_CLIENT): $(OBJS_CLIENT) $(HEAD_CLIENT)
 	make -C $(CLIB_DIR) bonus
-	$(CC) -o $@ $^ -L$(CLIB_DIR) -l$(CLIB)
+	$(CC) -o $@ $(OBJS_CLIENT) -L$(CLIB_DIR) -l$(CLIB)
 
 $(NAME_SERVER): $(OBJS_SERVER) $(HEAD_SERVER)
 	make -C $(CLIB_DIR) bonus
-	$(CC) -o $@ $^ -L$(CLIB_DIR) -l$(CLIB)
+	$(CC) -o $@ $(OBJS_SERVER) -L$(CLIB_DIR) -l$(CLIB)
 
 clean:
-	rm -f *.o
+	find . -name '*.o' -type f -delete
+	find . -name '*.a' -type f -delete
 
 fclean: clean
-	rm -f $(NAME)
+	rm -f $(NAMES)
 
 re: fclean all
 
