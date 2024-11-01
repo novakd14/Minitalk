@@ -6,7 +6,7 @@ The purpose of this project is to code a small data exchange program  using UNIX
 
 ## v1.1
 
-- message is now printing after completly recieving it (first is send the size of message)
+- message is now printing after completly recieving it (first 4 bytes is the size of message)
 - removed timestamps from client
 - best queueing possible
 - Need to add:
