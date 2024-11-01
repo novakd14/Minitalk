@@ -6,7 +6,7 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:10:00 by dnovak            #+#    #+#             */
-/*   Updated: 2024/10/09 14:16:40 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/11/01 12:33:40 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # define _POSIX_C_SOURCE 199309L
 
 # include "libft/libft.h"
-# include "test.h" //DELETE FOR EVAL
 # include <signal.h>
 # include <stdlib.h>
 # include <sys/types.h>

@@ -6,7 +6,7 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:10:00 by dnovak            #+#    #+#             */
-/*   Updated: 2024/10/09 13:49:09 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/10/31 23:48:01 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # define _DEFAULT_SOURCE
 
 # include "libft/libft.h"
-# include "test.h"
 # include <signal.h>
 # include <sys/types.h>
 # include <unistd.h>
