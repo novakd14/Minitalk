@@ -6,11 +6,11 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 00:30:10 by dnovak            #+#    #+#             */
-/*   Updated: 2024/06/19 15:52:53 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/10/21 11:56:11 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "ft_printf.h"
 
 static void	ft_cpyunbr(char *dest, int last, unsigned int n)
 {

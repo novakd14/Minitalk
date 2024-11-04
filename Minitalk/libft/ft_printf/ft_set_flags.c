@@ -6,11 +6,11 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/09 22:41:41 by dnovak            #+#    #+#             */
-/*   Updated: 2024/06/19 15:29:29 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/10/21 11:56:11 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "ft_printf.h"
 
 static int	ft_check_flags(char c, t_flags *flags)
 {

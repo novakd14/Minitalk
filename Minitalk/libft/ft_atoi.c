@@ -6,18 +6,11 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 16:25:59 by dnovak            #+#    #+#             */
-/*   Updated: 2024/05/29 23:45:13 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/10/26 23:15:13 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
-static int	ft_isspace(int c)
-{
-	if ((c >= '\t' && c <= '\r') || c == ' ')
-		return (c);
-	return (0);
-}
 
 // The atoi() function converts the initial portion of the string pointed to by
 // nptr to int. The behavior is the same as strtol(nptr, NULL, 10); except

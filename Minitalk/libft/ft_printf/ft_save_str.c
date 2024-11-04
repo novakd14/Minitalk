@@ -6,11 +6,11 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 00:30:06 by dnovak            #+#    #+#             */
-/*   Updated: 2024/06/19 15:46:29 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/10/21 11:56:11 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "ft_printf.h"
 
 int	ft_save_str(t_flags *flags, char *s)
 {

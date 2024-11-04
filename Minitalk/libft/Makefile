@@ -8,39 +8,44 @@ SRCS = ft_atoi.c ft_bzero.c ft_calloc.c ft_isalnum.c ft_isalpha.c \
 	ft_putendl_fd.c ft_putnbr_fd.c ft_putstr_fd.c ft_split.c ft_strchr.c \
 	ft_strdup.c ft_striteri.c ft_strjoin.c ft_strlcat.c ft_strlcpy.c \
 	ft_strlen.c ft_strmapi.c ft_strncmp.c ft_strnstr.c ft_strrchr.c \
-	ft_strtrim.c ft_substr.c ft_tolower.c ft_toupper.c
-BONS = ft_lstadd_back_bonus.c ft_lstadd_front_bonus.c ft_lstclear_bonus.c ft_lstdelone_bonus.c ft_lstiter_bonus.c \
-	ft_lstlast_bonus.c ft_lstmap_bonus.c ft_lstnew_bonus.c ft_lstsize_bonus.c
+	ft_strtrim.c ft_substr.c ft_tolower.c ft_toupper.c ft_isspace.c \
+	ft_isupper.c ft_islower.c ft_strtol.c
+LIST_SRCS = ft_lstadd_back.c ft_lstadd_front.c ft_lstclear.c ft_lstdelone.c ft_lstiter.c \
+	ft_lstlast.c ft_lstmap.c ft_lstnew.c ft_lstsize.c
+UTILS_SRCS = ft_utils.c
 PRINTF_DIR = ft_printf/
 PRINTF_SRCS = ft_printf.c ft_set_flags.c ft_save_char.c ft_save_str.c ft_save_ptr.c \
 	ft_save_int.c ft_save_uint.c ft_save_hexa_small.c ft_save_hexa_big.c ft_save_pct.c \
 	ft_save_flags.c ft_cpyextra.c ft_put_arg.c
-PRINTF_SRCS := $(addprefix $(PRINTF_DIR), $(PRINTF_SRCS))
+GNL_DIR = get_next_line/
+GNL_SRCS = get_next_line.c get_next_line_utils.c
 HEAD = libft.h
-PRINTF_HEAD = ft_printf.h libftprintf.h
-PRINTF_HEAD := $(addprefix $(PRINTF_DIR), $(PRINTF_HEAD))
-OBJS = $(SRCS:.c=.o)
-O_BONS = $(BONS:.c=.o)
-PRINTF_OBJS = $(PRINTF_SRCS:.c=.o)
+PRINTF_HEAD = ft_printf.h
+GNL_HEAD = get_next_line.h
 
-.PHONY: all clean fclean re bonus norm
+PRINTF_SRCS := $(addprefix $(PRINTF_DIR), $(PRINTF_SRCS))
+PRINTF_HEAD := $(addprefix $(PRINTF_DIR), $(PRINTF_HEAD))
+GNL_SRCS := $(addprefix $(GNL_DIR), $(GNL_SRCS))
+GNL_HEAD := $(addprefix $(GNL_DIR), $(GNL_HEAD))
+SRCS := $(SRCS) $(LIST_SRCS) $(UTILS_SRCS) $(PRINTF_SRCS) $(GNL_SRCS)
+HEADS = $(HEAD) $(PRINTF_HEAD) $(GNL_HEAD)
+OBJS = $(SRCS:.c=.o)
+
+.PHONY: all clean fclean re norm
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(HEAD)
-	ar -crs $(NAME) $(OBJS)
+$(NAME): $(OBJS) $(HEADS)
+	ar -crs $@ $^
 
 clean:
-	rm -f *.o
+	find . -name '*.o' -type f -delete
 
 fclean: clean
-	rm -f $(NAME)
+	find . -name '*.a' -type f -delete
 
 re: fclean all
 
-bonus: $(OBJS) $(O_BONS) $(PRINTF_OBJS) $(HEAD) $(PRINTF_HEAD)
-	ar -crs $(NAME) $(OBJS) $(O_BONS) $(PRINTF_OBJS)
-
 norm: all fclean
-	norminette $(SRCS) $(BONS) $(PRINTF_SRCS) $(HEAD) $(PRINTF_HEAD)
+	norminette $(SRCS) $(HEADS)
 

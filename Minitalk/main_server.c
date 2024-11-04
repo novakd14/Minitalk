@@ -6,7 +6,7 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:09:17 by dnovak            #+#    #+#             */
-/*   Updated: 2024/10/09 14:34:17 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/11/04 18:54:41 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,90 +14,62 @@
 
 t_message	g_mess;
 
-static void	load_message_size(int signum)
+static void	signal_handler(int signal)
 {
-	if (signum == SIGUSR1)
-	{
-		g_mess.size = (g_mess.size << 1) + 1;
-		g_mess.bite++;
-	}
-	else if (signum == SIGUSR2)
-	{
-		g_mess.size = g_mess.size << 1;
-		g_mess.bite++;
-	}
-}
+	int	byte;
 
-static void	malloc_buff(void)
-{
-	g_mess.message = (char *)calloc(g_mess.size + 1, sizeof(char));
-	if (g_mess.message == NULL)
-		exit(EXIT_FAILURE);
-	*(g_mess.message + g_mess.size) = 0;
-}
-
-static void	signal_handler(int signum)
-{
-	if (g_mess.bite == 1)
-		g_mess.recieving = TRUE;
-	if (g_mess.bite == (int)sizeof(int) * 8 && g_mess.message == NULL)
-		malloc_buff();
-	if (g_mess.bite < (int)sizeof(int) * 8)
-		load_message_size(signum);
-	else if (g_mess.bite / 8 - (int)sizeof(int) < g_mess.size)
+	if (g_mess.status == WAITING)
+		g_mess.status = SIZE_PROP;
+	if (g_mess.status == SIZE_PROP)
 	{
-		if (signum == SIGUSR1)
+		if (signal == SIGNAL1)
+			g_mess.bit_num++;
+		else
 		{
-			*(g_mess.message + g_mess.bite / 8 - sizeof(int)) *= 2;
-			*(g_mess.message + g_mess.bite / 8 - sizeof(int)) += 1;
-			g_mess.bite++;
-		}
-		else if (signum == SIGUSR2)
-		{
-			*(g_mess.message + g_mess.bite / 8 - sizeof(int)) *= 2;
-			g_mess.bite++;
+			g_mess.size_prop = g_mess.bit_num;
+			g_mess.bit_num = 0;
+			g_mess.status = SIZE;
 		}
 	}
-	if (g_mess.bite / 8 - (int)sizeof(int) == g_mess.size)
+	else
 	{
-		ft_printf("%s\n", g_mess.message);
-		free(g_mess.message);
-		ft_bzero(&g_mess, sizeof(g_mess));
+		byte = (g_mess.bit_num / 8) % 2;
+		g_mess.bytes[byte] <<= 1;
+		if (signal == SIGNAL1)
+			g_mess.bytes[byte] += 1;
+		g_mess.bit_num++;
 	}
 }
 
-static void	set_signal(void)
+static void	init_signals(void)
 {
-	struct sigaction	action;
-	sigset_t			mask;
+	sigset_t			sa_mask;
+	struct sigaction	sa;
 
-	sigemptyset(&mask);
-	sigaddset(&mask, SIGUSR1);
-	sigaddset(&mask, SIGUSR2);
-	ft_bzero(&action, sizeof(action));
-	action.sa_handler = &signal_handler;
-	action.sa_mask = mask;
-	sigaction(SIGUSR1, &action, NULL);
-	sigaction(SIGUSR2, &action, NULL);
+	if (sigemptyset(&sa_mask) == -1)
+		exit_message(EXIT_FAILURE, "ERROR: Could not initialize mask.\n");
+	if (sigaddset(&sa_mask, SIGNAL0) == -1)
+		exit_message(EXIT_FAILURE, "ERROR: Could not initialize mask.\n");
+	if (sigaddset(&sa_mask, SIGNAL1) == -1)
+		exit_message(EXIT_FAILURE, "ERROR: Could not initialize mask.\n");
+	sa.sa_handler = &signal_handler;
+	sa.sa_mask = sa_mask;
+	sa.sa_flags = 0;
+	if (sigaction(SIGNAL0, &sa, NULL) == -1)
+		exit_message(EXIT_FAILURE, "ERROR: Could not set a signal action.\n");
+	if (sigaction(SIGNAL1, &sa, NULL) == -1)
+		exit_message(EXIT_FAILURE, "ERROR: Could not set a signal action.\n");
 }
 
 int	main(void)
 {
-	ft_bzero(&g_mess, sizeof(g_mess));
-	set_signal();
+	g_mess.size_prop = -1;
+	init_signals();
 	ft_printf("%i\n", getpid());
-	while (1)
+	while (TRUE)
 	{
-		if (sleep(2) == 0 && g_mess.recieving == TRUE)
-		{
-			if (g_mess.message != NULL)
-				free(g_mess.message);
-			return (EXIT_FAILURE);
-		}
-		else
-		{
-			g_mess.recieving = TRUE;
-			pause();
-		}
+		pause();
+		recieve_message();
 	}
+	return (EXIT_SUCCESS);
 }

@@ -6,11 +6,11 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 00:29:41 by dnovak            #+#    #+#             */
-/*   Updated: 2024/09/13 13:08:29 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/10/21 11:59:25 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "ft_printf.h"
 
 static void	ft_cpyhexa_big(t_flags *flags, char *dest, int len, unsigned int x)
 {

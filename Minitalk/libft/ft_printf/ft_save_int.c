@@ -6,11 +6,11 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 00:29:51 by dnovak            #+#    #+#             */
-/*   Updated: 2024/06/19 15:54:13 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/10/21 11:56:11 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "ft_printf.h"
 
 static int	ft_checknbr(int n)
 {
@@ -40,8 +40,8 @@ static void	ft_cpyint(t_flags *flags, char *dest, int len, int n)
 	if (flags->sign_signed || flags->space_signed || n < 0)
 		start = 1;
 	if (flags->zero_padd)
-		ft_memset(dest + start, '0',
-			ft_max(0, flags->field_width - num_len - start));
+		ft_memset(dest + start, '0', ft_max(0, flags->field_width - num_len
+				- start));
 	else if (flags->precision >= 0)
 		ft_memset(dest + start, '0', ft_max(0, flags->precision - num_len));
 	ft_cpynbr(dest, len - 1, n);
