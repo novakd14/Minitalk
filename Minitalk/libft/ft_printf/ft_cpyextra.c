@@ -6,11 +6,11 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/09 12:00:40 by dnovak            #+#    #+#             */
-/*   Updated: 2024/06/19 03:02:21 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/10/21 11:56:11 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
+#include "ft_printf.h"
 
 void	ft_cpyhexadec_small(char *dest, int last, unsigned long x)
 {

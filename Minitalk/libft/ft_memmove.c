@@ -6,7 +6,7 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 23:53:12 by dnovak            #+#    #+#             */
-/*   Updated: 2024/05/31 02:58:20 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/10/21 15:56:46 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@ void	*ft_memmove(void *dest, const void *src, size_t n)
 	unsigned char	*sptr;
 	size_t			i;
 
-	if (dest == NULL && src == NULL)
-		return (NULL);
-	dptr = (unsigned char *) dest;
-	sptr = (unsigned char *) src;
+	if (dest == NULL || src == NULL)
+		return (dest);
+	dptr = (unsigned char *)dest;
+	sptr = (unsigned char *)src;
 	if (src >= dest)
 	{
 		i = 0;
