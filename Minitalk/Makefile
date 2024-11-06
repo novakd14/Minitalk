@@ -15,18 +15,20 @@ OBJS_SERVER = $(SRCS_SERVER:.c=.o)
 
 NAMES = $(NAME_CLIENT) $(NAME_SERVER)
 
-# 46 char
-MESSAGE = "42Prague is the best damn school in the world!"
+# 17 char
+MESSAGE = "42Prague is best!"
 # 100 char
 MESSAGE1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas rhoncus pharetra orci dapibus nam."
-# 255 char
-MESSAGE2 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris id maximus mauris. Aenean quis eros nec quam sagittis iaculis. Aenean gravida placerat sem et pulvinar. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nam ullamcorper molestie."
+# 254 char
+MESSAGE2 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris id maximus mauris. Aenean quis eros nec quam sagittis iaculis. Aenean gravida placerat sem et pulvinar. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nam ullamcorper molestie"
 # 256 char
 MESSAGE3 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tempor lacinia nisl, non aliquam ex vulputate non. Cras ut porttitor nulla, ac placerat felis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis porttitor."
 # MESSAGE2 = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
 # MESSAGE3 = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt."
 # 998 char
 MESSAGE4 = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum."
+# UNICODE
+MESSAGE5 = "⡨ⲷ⋼⸦▻ⳁ⇶∳Ⳕ₈⠸Ⓝ∽┗⩓Ⓢ⥺⓫ⷤ⚡‼⯏⽶⚀⫽⦐②≏⥠⨝ⳅⴻⅦ"
 
 .PHONY: all clean fclean re test norm memleak
 
@@ -55,6 +57,7 @@ run_client: $(NAME_CLIENT)
 	-./$< $(PID) $(MESSAGE2)
 	-./$< $(PID) $(MESSAGE3)
 	-./$< $(PID) $(MESSAGE4)
+	-./$< $(PID) $(MESSAGE5)
 
 run_server: $(NAME_SERVER)
 	-./$<

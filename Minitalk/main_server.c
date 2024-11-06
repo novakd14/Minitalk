@@ -6,7 +6,7 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:09:17 by dnovak            #+#    #+#             */
-/*   Updated: 2024/11/04 18:54:41 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/11/06 02:28:07 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,47 +14,42 @@
 
 t_message	g_mess;
 
-static void	signal_handler(int signal)
+void	exit_message(int status, char *message)
 {
-	int	byte;
-
-	if (g_mess.status == WAITING)
-		g_mess.status = SIZE_PROP;
-	if (g_mess.status == SIZE_PROP)
-	{
-		if (signal == SIGNAL1)
-			g_mess.bit_num++;
-		else
-		{
-			g_mess.size_prop = g_mess.bit_num;
-			g_mess.bit_num = 0;
-			g_mess.status = SIZE;
-		}
-	}
+	if (status == EXIT_SUCCESS)
+		ft_putstr_fd(message, STDOUT_FILENO);
 	else
-	{
-		byte = (g_mess.bit_num / 8) % 2;
-		g_mess.bytes[byte] <<= 1;
-		if (signal == SIGNAL1)
-			g_mess.bytes[byte] += 1;
-		g_mess.bit_num++;
-	}
+		ft_putstr_fd(message, STDERR_FILENO);
+	exit(status);
+}
+
+static void	signal_action(int signal, siginfo_t *info, void *ucontext)
+{
+	g_mess.recieved = TRUE;
+	g_mess.pid = info->si_pid;
+	if (signal == SIGNAL0)
+		g_mess.bit = 0;
+	else
+		g_mess.bit = 1;
+	(void)ucontext;
+	if (signal == SIGNAL0)  // TEMP
+		write(1, "0\n", 2); // TEMP
+	else                    // TEMP
+		write(1, "1\n", 2); // TEMP
 }
 
 static void	init_signals(void)
 {
-	sigset_t			sa_mask;
 	struct sigaction	sa;
+	sigset_t			mask;
 
-	if (sigemptyset(&sa_mask) == -1)
+	if (sigemptyset(&mask) == -1)
 		exit_message(EXIT_FAILURE, "ERROR: Could not initialize mask.\n");
-	if (sigaddset(&sa_mask, SIGNAL0) == -1)
-		exit_message(EXIT_FAILURE, "ERROR: Could not initialize mask.\n");
-	if (sigaddset(&sa_mask, SIGNAL1) == -1)
-		exit_message(EXIT_FAILURE, "ERROR: Could not initialize mask.\n");
-	sa.sa_handler = &signal_handler;
-	sa.sa_mask = sa_mask;
-	sa.sa_flags = 0;
+	if (sigaddset(&mask, SIGNAL0) == -1 || sigaddset(&mask, SIGNAL1) == -1)
+		exit_message(EXIT_FAILURE, "ERROR: Could not add a signal to mask.\n");
+	sa.sa_sigaction = &signal_action;
+	sa.sa_mask = mask;
+	sa.sa_flags = SA_SIGINFO;
 	if (sigaction(SIGNAL0, &sa, NULL) == -1)
 		exit_message(EXIT_FAILURE, "ERROR: Could not set a signal action.\n");
 	if (sigaction(SIGNAL1, &sa, NULL) == -1)
@@ -63,13 +58,12 @@ static void	init_signals(void)
 
 int	main(void)
 {
-	g_mess.size_prop = -1;
 	init_signals();
 	ft_printf("%i\n", getpid());
 	while (TRUE)
 	{
-		pause();
 		recieve_message();
+		ft_printf("NOTE: Message recieved.\n"); // TEMP
 	}
 	return (EXIT_SUCCESS);
 }
