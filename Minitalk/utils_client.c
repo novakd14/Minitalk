@@ -6,7 +6,7 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 12:20:26 by dnovak            #+#    #+#             */
-/*   Updated: 2024/11/06 02:26:10 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/11/06 12:45:01 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,36 +30,38 @@ t_bool	ft_ispid(char *num)
 	return (TRUE);
 }
 
-void	exit_message(int status, char *message)
+static void	signal_handler(int signal)
 {
-	size_t	len;
-
-	len = ft_strlen(message);
-	if (status == EXIT_SUCCESS)
-		write(STDOUT_FILENO, message, len);
+	if (signal == SIGNAL_SENDING)
+		g_status = RECIEVED;
 	else
-		write(STDERR_FILENO, message, len);
-	exit(status);
+		g_status = FINISH;
 }
 
-// void	advanced_pause(void)
-// {
-// 	if (usleep(WAIT_TIME) != -1)
-// 		ft_printf("NOTE: Waited for the whole usleep.\n");
-// 	if (g_mess.used == TRUE)
-// 		exit_message(EXIT_FAILURE,
-// 			"ERROR: Did not recieve confirmation from server.\n");
-// 	g_mess.used = TRUE;
-// }
+void	init_signals(void)
+{
+	struct sigaction	sa;
+	sigset_t			mask;
+
+	if (sigemptyset(&mask) == -1)
+		exit_message(EXIT_FAILURE, "ERROR: Could not initialize mask.\n");
+	if (sigaddset(&mask, SIGNAL_SENDING) == -1)
+		exit_message(EXIT_FAILURE, "ERROR: Could not add signal to mask.\n");
+	if (sigaddset(&mask, SIGNAL_FINISH) == -1)
+		exit_message(EXIT_FAILURE, "ERROR: Could not add signal to mask.\n");
+	sa.sa_handler = &signal_handler;
+	sa.sa_mask = mask;
+	sa.sa_flags = 0;
+	if (sigaction(SIGNAL_SENDING, &sa, NULL) == -1)
+		exit_message(EXIT_FAILURE, "ERROR: Could not set a signal action.\n");
+	if (sigaction(SIGNAL_FINISH, &sa, NULL) == -1)
+		exit_message(EXIT_FAILURE, "ERROR: Could not set a signal action.\n");
+}
 
 void	kill_with_check(pid_t pid, int signal, int status)
 {
 	int	time;
 
-	if (signal == SIGNAL0)  // TEMP
-		write(1, "0\n", 2); // TEMP
-	else                    // TEMP
-		write(1, "1\n", 2); // TEMP
 	if (kill(pid, signal) == -1)
 		exit_message(EXIT_FAILURE,
 			"ERROR: Could not send message. Signal was not recieved.\n");
@@ -76,4 +78,16 @@ void	kill_with_check(pid_t pid, int signal, int status)
 		exit_message(EXIT_FAILURE,
 			"ERROR: Server did not recieve full message.\n");
 	g_status = WAITING;
+}
+
+void	exit_message(int status, char *message)
+{
+	size_t	len;
+
+	len = ft_strlen(message);
+	if (status == EXIT_SUCCESS)
+		write(STDOUT_FILENO, message, len);
+	else
+		write(STDERR_FILENO, message, len);
+	exit(status);
 }

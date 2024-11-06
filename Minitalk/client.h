@@ -6,7 +6,7 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:10:00 by dnovak            #+#    #+#             */
-/*   Updated: 2024/11/06 01:29:17 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/11/06 12:43:49 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,8 @@ typedef struct s_message
 }					t_message;
 
 t_bool				ft_ispid(char *num);
-void				exit_message(int status, char *message);
-// void				advanced_pause(void);
+void				init_signals(void);
 void				kill_with_check(pid_t pid, int signal, int status);
+void				exit_message(int status, char *message);
 
 #endif // CLIENT_H
