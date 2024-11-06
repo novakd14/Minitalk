@@ -6,27 +6,43 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:10:00 by dnovak            #+#    #+#             */
-/*   Updated: 2024/11/04 18:54:57 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/11/06 01:57:52 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_H
 # define SERVER_H
 
+// FOR: usleep()
+# ifndef _DEFAULT_SOURCE
+#  define _DEFAULT_SOURCE
+# endif
+
+// FOR: siginfo_t (and signals)
 # ifndef _POSIX_C_SOURCE
 #  define _POSIX_C_SOURCE 199309L
 # endif
 
 # include "libft/libft.h" // ft_strlen(), ft_printf(), ft_calloc(), ft_bzero()
 							//-> <stdlib.h> exit(), free(), EXIT_*
-							//-> <unistd.h> get_pid(), write(), sleep(),
+							//-> <unistd.h> get_pid(), write(), usleep(),
 # include <signal.h>      // kill(), sigaction(), SIGUSR*
 # include <sys/types.h>   // pid_t
+
+# ifndef WAIT_TIME
+#  define WAIT_TIME 500000
+# endif
+
+# ifndef TIME_STEP
+#  define TIME_STEP 500
+# endif
 
 typedef enum e_signal
 {
 	SIGNAL0 = SIGUSR1,
 	SIGNAL1 = SIGUSR2,
+	SIGNAL_SENDING = SIGUSR1,
+	SIGNAL_FINISH = SIGUSR2,
 }					t_sig;
 
 typedef enum e_bool
@@ -37,20 +53,15 @@ typedef enum e_bool
 
 typedef enum e_status
 {
-	WAITING,
-	SIZE_PROP,
-	SIZE,
-	MESSAGE,
+	ERROR = -1,
+	SUCCESS = 0,
 }					t_status;
 
 typedef struct s_message
 {
-	t_status		status;
-	size_t			size;
-	int				size_prop;
-	unsigned char	bytes[2];
-	int				byte_num;
-	size_t			bit_num;
+	int				pid;
+	char			bit;
+	sig_atomic_t	recieved;
 }					t_message;
 
 void				recieve_message(void);
