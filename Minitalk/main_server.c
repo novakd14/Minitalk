@@ -6,54 +6,96 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:09:17 by dnovak            #+#    #+#             */
-/*   Updated: 2024/11/06 02:28:07 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/11/06 13:15:36 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.h"
 
-t_message	g_mess;
+t_message		g_mess;
 
-void	exit_message(int status, char *message)
+static char	read_size_prop(void)
 {
-	if (status == EXIT_SUCCESS)
-		ft_putstr_fd(message, STDOUT_FILENO);
-	else
-		ft_putstr_fd(message, STDERR_FILENO);
-	exit(status);
+	char	size_prop;
+
+	size_prop = 0;
+	if (g_mess.recieved == FALSE)
+		pause();
+	g_mess.recieved = FALSE;
+	while (TRUE)
+	{
+		if (g_mess.bit == 1)
+		{
+			size_prop++;
+			if (kill_with_check(g_mess.pid, SIGNAL_SENDING) == ERROR)
+				return (0);
+		}
+		else
+			return (size_prop + 1);
+	}
 }
 
-static void	signal_action(int signal, siginfo_t *info, void *ucontext)
+static size_t	init_message(char size_prop, char **message)
 {
-	g_mess.recieved = TRUE;
-	g_mess.pid = info->si_pid;
-	if (signal == SIGNAL0)
-		g_mess.bit = 0;
-	else
-		g_mess.bit = 1;
-	(void)ucontext;
-	if (signal == SIGNAL0)  // TEMP
-		write(1, "0\n", 2); // TEMP
-	else                    // TEMP
-		write(1, "1\n", 2); // TEMP
+	size_t	size;
+	char	bit_num;
+
+	size = 0;
+	bit_num = 0;
+	if (kill_with_check(g_mess.pid, SIGNAL_SENDING) == ERROR)
+		return (0);
+	while (TRUE)
+	{
+		bit_num++;
+		size <<= 1;
+		size += g_mess.bit;
+		if (bit_num >= size_prop * 8)
+			break ;
+		else if (kill_with_check(g_mess.pid, SIGNAL_SENDING) == ERROR)
+			return (0);
+	}
+	*message = (char *)ft_calloc(size, sizeof(char));
+	if (*message == NULL)
+	{
+		ft_putstr_fd("ERROR: Could not allocate memory.\n", STDERR_FILENO);
+		return (0);
+	}
+	return (size);
 }
 
-static void	init_signals(void)
+static void	read_message(char *message, size_t size)
 {
-	struct sigaction	sa;
-	sigset_t			mask;
+	size_t	bit_num;
 
-	if (sigemptyset(&mask) == -1)
-		exit_message(EXIT_FAILURE, "ERROR: Could not initialize mask.\n");
-	if (sigaddset(&mask, SIGNAL0) == -1 || sigaddset(&mask, SIGNAL1) == -1)
-		exit_message(EXIT_FAILURE, "ERROR: Could not add a signal to mask.\n");
-	sa.sa_sigaction = &signal_action;
-	sa.sa_mask = mask;
-	sa.sa_flags = SA_SIGINFO;
-	if (sigaction(SIGNAL0, &sa, NULL) == -1)
-		exit_message(EXIT_FAILURE, "ERROR: Could not set a signal action.\n");
-	if (sigaction(SIGNAL1, &sa, NULL) == -1)
-		exit_message(EXIT_FAILURE, "ERROR: Could not set a signal action.\n");
+	bit_num = 0;
+	while (bit_num < (size * 8))
+	{
+		if (kill_with_check(g_mess.pid, SIGNAL_SENDING) == ERROR)
+			return ;
+		message[bit_num / 8] <<= 1;
+		message[bit_num / 8] += g_mess.bit;
+		bit_num++;
+	}
+	write(STDOUT_FILENO, message, size);
+	write(STDOUT_FILENO, "\n", 1);
+}
+
+static void	recieve_message(void)
+{
+	char	size_prop;
+	size_t	size;
+	char	*message;
+
+	message = NULL;
+	size_prop = read_size_prop();
+	if (size_prop == 0)
+		return ;
+	size = init_message(size_prop, &message);
+	if (size == 0)
+		return ;
+	read_message(message, size);
+	free(message);
+	kill(g_mess.pid, SIGNAL_FINISH);
 }
 
 int	main(void)
@@ -61,9 +103,6 @@ int	main(void)
 	init_signals();
 	ft_printf("%i\n", getpid());
 	while (TRUE)
-	{
 		recieve_message();
-		ft_printf("NOTE: Message recieved.\n"); // TEMP
-	}
 	return (EXIT_SUCCESS);
 }

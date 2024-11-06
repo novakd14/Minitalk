@@ -6,7 +6,7 @@
 /*   By: dnovak <dnovak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:10:00 by dnovak            #+#    #+#             */
-/*   Updated: 2024/11/06 01:57:52 by dnovak           ###   ########.fr       */
+/*   Updated: 2024/11/06 12:43:37 by dnovak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,8 @@ typedef struct s_message
 	sig_atomic_t	recieved;
 }					t_message;
 
-void				recieve_message(void);
+void				init_signals(void);
+t_status			kill_with_check(pid_t pid, int signal);
 void				exit_message(int status, char *message);
 
 #endif // SERVER_H
